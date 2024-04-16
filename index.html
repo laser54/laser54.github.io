@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Анализ затрат на печать</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; }
+        .container { max-width: 600px; background: white; padding: 20px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        input, button { width: 100%; padding: 10px; margin-top: 5px; }
+        button { background-color: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Анализ затрат на печать</h1>
+    <input type="number" id="printer_cost" placeholder="Стоимость одного принтера">
+    <input type="number" id="printer_maintenance" placeholder="Годовое обслуживание принтера">
+    <input type="number" id="printer_sheets_per_user" placeholder="Количество листов на пользователя">
+    <input type="number" id="printer_sheet_cost" placeholder="Стоимость печати одного листа (принтер)">
+    
+    <input type="number" id="mfu_cost" placeholder="Стоимость МФУ">
+    <input type="number" id="mfu_maintenance" placeholder="Годовое обслуживание МФУ">
+    <input type="number" id="mfu_sheets_per_user" placeholder="Количество листов на пользователя (МФУ)">
+    <input type="number" id="mfu_sheet_cost" placeholder="Стоимость печати одного листа (МФУ)">
+
+    <button onclick="calculateCosts()">Рассчитать</button>
+
+    <div id="result" style="margin-top: 20px;"></div>
+</div>
+
+<script>
+function calculateCosts() {
+    let printerCost = parseFloat(document.getElementById('printer_cost').value);
+    let printerMaintenance = parseFloat(document.getElementById('printer_maintenance').value);
+    let printerSheetsPerUser = parseFloat(document.getElementById('printer_sheets_per_user').value);
+    let printerSheetCost = parseFloat(document.getElementById('printer_sheet_cost').value);
+
+    let mfuCost = parseFloat(document.getElementById('mfu_cost').value);
+    let mfuMaintenance = parseFloat(document.getElementById('mfu_maintenance').value);
+    let mfuSheetsPerUser = parseFloat(document.getElementById('mfu_sheets_per_user').value);
+    let mfuSheetCost = parseFloat(document.getElementById('mfu_sheet_cost').value);
+
+    let totalPrinterCosts = printerCost + printerMaintenance + (printerSheetsPerUser * printerSheetCost);
+    let totalMfuCosts = mfuCost + mfuMaintenance + (mfuSheetsPerUser * mfuSheetCost);
+
+    let result = "Общие годовые затраты на принтеры: " + totalPrinterCosts.toFixed(2) + " руб.<br>" +
+                 "Общие годовые затраты на МФУ: " + totalMfuCosts.toFixed(2) + " руб.";
+
+    document.getElementById('result').innerHTML = result;
+}
+</script>
+</body>
+</html>
