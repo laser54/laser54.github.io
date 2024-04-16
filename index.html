@@ -27,12 +27,14 @@
             <input type="number" class="form-control" id="printer_cost" placeholder="Стоимость одного принтера" required>
             <input type="number" class="form-control" id="printer_maintenance" placeholder="Годовое обслуживание одного принтера" required>
             <input type="number" class="form-control" id="printer_sheets_per_user" placeholder="Среднее количество листов на пользователя в год" required>
+            <input type="number" class="form-control" id="printer_sheet_cost" placeholder="Стоимость печати одного листа (принтер)" required>
         </div>
         <div class="col-md-6">
             <h4>МФУ</h4>
             <input type="number" class="form-control" id="mfu_cost" placeholder="Стоимость МФУ" required>
             <input type="number" class="form-control" id="mfu_maintenance" placeholder="Годовое обслуживание МФУ" required>
             <input type="number" class="form-control" id="mfu_sheets_per_user" placeholder="Среднее количество листов на пользователя в год" required>
+            <input type="number" class="form-control" id="mfu_sheet_cost" placeholder="Стоимость печати одного листа (МФУ)" required>
             <input type="number" class="form-control" id="visits_per_day" placeholder="Количество посещений МФУ в день" required>
             <input type="number" class="form-control" id="time_per_visit" placeholder="Время на одно посещение МФУ (в минутах)" required>
             <input type="number" class="form-control" id="monthly_salary" placeholder="Месячная зарплата сотрудника" required>
@@ -42,11 +44,11 @@
     <button class="btn btn-primary" onclick="calculateCosts()">Рассчитать</button>
     <div id="result" class="mt-4"></div>
     <div class="footer">
-        <p>Расчёты основаны на следующих формулах:</p>
+        <p>Формулы для расчёта затрат:</p>
         <ul>
             <li>Общие годовые затраты на принтеры = (Стоимость принтера + Годовое обслуживание) * Количество принтеров + (Среднее количество листов на пользователя * Стоимость печати одного листа * Количество сотрудников)</li>
-            <li>Общие годовые затраты на МФУ = Стоимость МФУ + Годовое обслуживание МФУ + (Среднее количество листов на пользователя МФУ * Стоимость печати одного листа МФУ * Количество сотрудников)</li>
-            <li>Дополнительные годовые затраты на посещение МФУ = (Количество посещений в день * Время на посещение * Стоимость часа работы сотрудника * 20 рабочих дней в месяц * 12 месяцев)</li>
+            <li>Общие годовые затраты на МФУ = Стоимость МФУ + Годовое обслуживание МФУ + (Среднее количество листов на пользователя МФУ * Стоимость печати одного листа МФУ * Количество сотрудников) + Дополнительные затраты на время посещений</li>
+            <li>Дополнительные затраты на посещения МФУ = (Количество посещений в день * Время на посещение * Стоимость часа работы сотрудника * 20 рабочих дней в месяц * 12 месяцев)</li>
         </ul>
     </div>
 </div>
@@ -57,10 +59,12 @@ function calculateCosts() {
     const printerCost = parseFloat(document.getElementById('printer_cost').value);
     const printerMaintenance = parseFloat(document.getElementById('printer_maintenance').value);
     const printerSheetsPerUser = parseFloat(document.getElementById('printer_sheets_per_user').value);
+    const printerSheetCost = parseFloat(document.getElementById('printer_sheet_cost').value);
 
     const mfuCost = parseFloat(document.getElementById('mfu_cost').value);
     const mfuMaintenance = parseFloat(document.getElementById('mfu_maintenance').value);
     const mfuSheetsPerUser = parseFloat(document.getElementById('mfu_sheets_per_user').value);
+    const mfuSheetCost = parseFloat(document.getElementById('mfu_sheet_cost').value);
 
     const visitsPerDay = parseInt(document.getElementById('visits_per_day').value);
     const timePerVisit = parseFloat(document.getElementById('time_per_visit').value);
@@ -70,8 +74,8 @@ function calculateCosts() {
     const hourlyRate = monthlySalary / 160; // Assuming 160 working hours per month
     const extraCostPerYear = visitsPerDay * timePerVisit * hourlyRate / 60 * 20 * 12; // 20 working days per month, 12 months per year
 
-    const totalPrinterCosts = (printerCost * printerCount + printerMaintenance * printerCount) + (printerSheetsPerUser * numberOfEmployees);
-    const totalMfuCosts = mfuCost + mfuMaintenance + (mfuSheetsPerUser * numberOfEmployees) + extraCostPerYear;
+    const totalPrinterCosts = (printerCost * printerCount + printerMaintenance * printerCount) + (printerSheetsPerUser * printerSheetCost * numberOfEmployees);
+    const totalMfuCosts = mfuCost + mfuMaintenance + (mfuSheetsPerUser * mfuSheetCost * numberOfEmployees) + extraCostPerYear;
 
     let resultText = `<strong>Общие годовые затраты на принтеры:</strong> ${totalPrinterCosts.toFixed(2)} руб.<br>` +
                      `<strong>Общие годовые затраты на МФУ:</strong> ${totalMfuCosts.toFixed(2)} руб.<br>`;
