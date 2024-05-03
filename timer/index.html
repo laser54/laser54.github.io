@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Таймер для мультиварки</title>
+    <style>
+        body, html {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        input[type="time"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-transform: uppercase;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e8f5e9;
+            border-left: 5px solid #4CAF50;
+            color: #2e7d32;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Таймер для мультиварки</h1>
+        <div class="input-group">
+            <label for="desiredTime">Время готовности (чч:мм):</label>
+            <input type="time" id="desiredTime" required>
+        </div>
+        <div class="input-group">
+            <label for="cookingTime">Время приготовления (минуты):</label>
+            <input type="number" id="cookingTime" required>
+        </div>
+        <div class="input-group">
+            <label for="currentTime">Текущее время (чч:мм):</label>
+            <input type="time" id="currentTime" required>
+        </div>
+        <button onclick="calculateTimer()">Вычислить время запуска</button>
+        <div id="result"></div>
+    </div>
+    <script>
+        function calculateTimer() {
+            const desiredTime = document.getElementById('desiredTime').value;
+            const cookingTime = parseInt(document.getElementById('cookingTime').value);
+            const currentTime = document.getElementById('currentTime').value;
+
+            if (!desiredTime || !cookingTime || !currentTime) {
+                document.getElementById('result').textContent = 'Пожалуйста, заполните все поля!';
+                return;
+            }
+
+            const desiredDate = new Date();
+            const [desiredHours, desiredMinutes] = desiredTime.split(':');
+            desiredDate.setHours(desiredHours, desiredMinutes, 0, 0);
+
+            const currentDate = new Date();
+            const [currentHours, currentMinutes] = currentTime.split(':');
+            currentDate.setHours(currentHours, currentMinutes, 0, 0);
+
+            const startTime = new Date(desiredDate.getTime() - cookingTime * 60000);
+            if (startTime < currentDate) {
+                document.getElementById('result').textContent = 'Время запуска уже прошло!';
+                return;
+            }
+
+            const startHours = startTime.getHours().toString().padStart(2, '0');
+            const startMinutes = startTime.getMinutes().toString().padStart(2, '0');
+            document.getElementById('result').textContent = `Установите таймер на ${startHours}:${startMinutes}`;
+        }
+    </script>
+</body>
+</html>
