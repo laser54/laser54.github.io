@@ -66,7 +66,7 @@
     <div class="container">
         <h1>Таймер для мультиварки</h1>
         <div class="input-group">
-            <label for="desiredTime">Время готовности (чч:мм):</label>
+            <label for="desiredTime">Время готовности на следующий день (чч:мм):</label>
             <input type="time" id="desiredTime" required>
         </div>
         <div class="input-group">
@@ -83,7 +83,7 @@
     <script>
         function calculateTimer() {
             const desiredTime = document.getElementById('desiredTime').value;
-            const cookingTime = parseInt(document.getElementById('cookingTime').value);
+            const cookingTime = parseInt(document.getElementById('cookingTime').value, 10);
             const currentTime = document.getElementById('currentTime').value;
 
             if (!desiredTime || !cookingTime || !currentTime) {
@@ -92,6 +92,7 @@
             }
 
             const desiredDate = new Date();
+            desiredDate.setDate(desiredDate.getDate() + 1); // на следующий день
             const [desiredHours, desiredMinutes] = desiredTime.split(':');
             desiredDate.setHours(desiredHours, desiredMinutes, 0, 0);
 
@@ -99,15 +100,17 @@
             const [currentHours, currentMinutes] = currentTime.split(':');
             currentDate.setHours(currentHours, currentMinutes, 0, 0);
 
-            const startTime = new Date(desiredDate.getTime() - cookingTime * 60000);
-            if (startTime < currentDate) {
+            const timeDifference = desiredDate.getTime() - currentDate.getTime() - cookingTime * 60000;
+
+            if (timeDifference < 0) {
                 document.getElementById('result').textContent = 'Время запуска уже прошло!';
                 return;
             }
 
-            const startHours = startTime.getHours().toString().padStart(2, '0');
-            const startMinutes = startTime.getMinutes().toString().padStart(2, '0');
-            document.getElementById('result').textContent = `Установите таймер на ${startHours}:${startMinutes}`;
+            const delayHours = Math.floor(timeDifference / 3600000);
+            const delayMinutes = Math.floor((timeDifference % 3600000) / 60000);
+
+            document.getElementById('result').textContent = `Установите таймер через ${delayHours} час(ов) и ${delayMinutes} минут(ы)`;
         }
     </script>
 </body>
